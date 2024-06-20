@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  app:
+    build: ./aggregatorApp
+    container_name: app
+    volumes:
+      - ./aggregatorApp:/app
+    depends_on:
+      - mqtt
+
+  sender:
+    build: ./sendingApp
+    container_name: sender
+    volumes:
+      - ./sendingApp:/sendApp
+    depends_on:
+      - mqtt
+
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: aggregated_data
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:  
+      - 5432:5432
+
+  mqtt:
+    image: eclipse-mosquitto
+    container_name: mosquitto
+    hostname: mqtt
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto_data:/mosquitto/data:rw
+      - ./mosquitto_config:/mosquitto/config:rw
+      - ./mosquitto_log:/mosquitto/log:rw
+    restart: unless-stopped
+
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+volumes:
+  postgres_data:
+  mosquitto_data:
+  mosquitto_config:
+  mosquitto_log:

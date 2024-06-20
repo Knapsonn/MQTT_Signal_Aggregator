@@ -19,6 +19,8 @@ mqtt_port = 1883
 T = int(sys.argv[1])
 N = int(sys.argv[2])
 
+logging.info(("T is: "+str(T), "N is: "+str(N)))
+
 is_aggregating = False
 measurements = []
 
@@ -38,7 +40,7 @@ def aggregate_and_save() -> None:
     arr = deepcopy(measurements)
     if len(arr) < N:
         return
-    elif len(arr) == N:
+    elif len(arr) >= N:
         is_aggregating = True
         periods = [m['time']for m in arr]
         period_start = min(periods)

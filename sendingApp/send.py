@@ -35,7 +35,7 @@ while True:
 
     json_payload = json.dumps(payload)
 
-    time.sleep(3)
+    time.sleep(1)
     client.publish("measurements",json_payload,0)
 
 
